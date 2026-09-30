@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-80 -180 160 215">
+  <!-- Same viewBox as cat.svg, so the two images line up when stacked. -->
+  <g stroke="#5b4636" stroke-width="1.6">
+    <line x1="-70" y1="-100" x2="-22" y2="-40"/>
+    <line x1="-35" y1="-102" x2="-22" y2="-40"/>
+    <line x1="35" y1="-102" x2="22" y2="-40"/>
+    <line x1="70" y1="-100" x2="22" y2="-40"/>
+  </g>
+  <g stroke="#4a2511" stroke-width="3" stroke-linejoin="round">
+    <path d="M -70 -100 Q -72 -168 0 -172 Q -40 -168 -35 -100 Q -52.5 -112 -70 -100 Z" fill="#ef4444"/>
+    <path d="M -35 -100 Q -40 -168 0 -172 Q -6 -168 0 -100 Q -17.5 -112 -35 -100 Z" fill="#fff7ed"/>
+    <path d="M 0 -100 Q 6 -168 0 -172 Q 40 -168 35 -100 Q 17.5 -112 0 -100 Z" fill="#ef4444"/>
+    <path d="M 35 -100 Q 40 -168 0 -172 Q 72 -168 70 -100 Q 52.5 -112 35 -100 Z" fill="#fff7ed"/>
+  </g>
+  <path d="M -48 -150 Q -30 -166 -10 -168" stroke="#fff" stroke-opacity=".7" stroke-width="5" fill="none" stroke-linecap="round"/>
+</svg>

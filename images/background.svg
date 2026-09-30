@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1000 0 3024 718">
+  <!-- The game area is x 0 to 1024. The extra 1000 px on each side fills wide screens. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4fa9e6"/>
+      <stop offset=".7" stop-color="#9dd6f7"/>
+      <stop offset="1" stop-color="#d7f1fd"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop offset=".45" stop-color="#fff3b0" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#fff3b0" stop-opacity="0"/>
+    </radialGradient>
+    <g id="tree">
+      <rect x="-4" y="-10" width="8" height="22" rx="3" fill="#8a5a33"/>
+      <circle cx="0" cy="-26" r="20"/>
+      <circle cx="-10" cy="-18" r="13"/>
+      <circle cx="11" cy="-17" r="12"/>
+    </g>
+  </defs>
+
+  <!-- sky and sun -->
+  <rect x="-1000" width="3024" height="628" fill="url(#sky)"/>
+  <circle cx="880" cy="86" r="110" fill="url(#glow)"/>
+  <circle cx="880" cy="86" r="42" fill="#ffd84d" stroke="#f5b82e" stroke-width="4"/>
+
+  <!-- hills and trees -->
+  <ellipse cx="-900" cy="658" rx="600" ry="110" fill="#a8dc86"/>
+  <ellipse cx="-200" cy="648" rx="520" ry="120" fill="#9fd67e"/>
+  <ellipse cx="420" cy="658" rx="460" ry="100" fill="#a8dc86"/>
+  <ellipse cx="1050" cy="648" rx="520" ry="130" fill="#9fd67e"/>
+  <ellipse cx="1700" cy="658" rx="600" ry="110" fill="#a8dc86"/>
+  <use href="#tree" x="-400" y="588" fill="#4f9d3a"/>
+  <use href="#tree" x="-120" y="578" fill="#4f9d3a"/>
+  <use href="#tree" x="250" y="596" fill="#5eb044"/>
+  <use href="#tree" x="610" y="590" fill="#4f9d3a"/>
+  <use href="#tree" x="660" y="598" fill="#5eb044"/>
+  <use href="#tree" x="1110" y="574" fill="#4f9d3a"/>
+  <use href="#tree" x="1180" y="584" fill="#5eb044"/>
+  <use href="#tree" x="1500" y="578" fill="#4f9d3a"/>
+
+  <!-- grass -->
+  <rect x="-1000" y="618" width="3024" height="100" fill="#6cc04a"/>
+  <rect x="-1000" y="618" width="3024" height="6" fill="#86d35f"/>
+  <g>
+    <circle cx="-560" cy="690" r="4" fill="#fff"/>
+    <circle cx="-300" cy="676" r="4" fill="#fde047"/>
+    <circle cx="-80" cy="700" r="4" fill="#f9a8d4"/>
+    <circle cx="40" cy="680" r="4" fill="#fde047"/>
+    <circle cx="130" cy="700" r="4" fill="#fff"/>
+    <circle cx="230" cy="672" r="4" fill="#f9a8d4"/>
+    <circle cx="340" cy="694" r="4" fill="#fde047"/>
+    <circle cx="450" cy="676" r="4" fill="#fff"/>
+    <circle cx="560" cy="702" r="4" fill="#f9a8d4"/>
+    <circle cx="660" cy="684" r="4" fill="#fde047"/>
+    <circle cx="770" cy="698" r="4" fill="#fff"/>
+    <circle cx="880" cy="676" r="4" fill="#f9a8d4"/>
+    <circle cx="980" cy="694" r="4" fill="#fde047"/>
+    <circle cx="1120" cy="680" r="4" fill="#fff"/>
+    <circle cx="1300" cy="698" r="4" fill="#f9a8d4"/>
+    <circle cx="1540" cy="684" r="4" fill="#fde047"/>
+  </g>
+</svg>

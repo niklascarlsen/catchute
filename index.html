@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>Catchute</title>
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="stage">
+      <!-- The game world -->
+      <div id="scenery"></div>
+      <img class="cloud cloud-1" src="images/cloud.svg" alt="" />
+      <img class="cloud cloud-2" src="images/cloud.svg" alt="" />
+      <img class="cloud cloud-3" src="images/cloud.svg" alt="" />
+      <img class="cloud cloud-4" src="images/cloud.svg" alt="" />
+      <img id="plane" src="images/plane.svg" alt="" />
+      <div id="pads"></div>
+      <div id="jumper" hidden>
+        <img id="parachute" src="images/parachute.svg" alt="" />
+        <img id="cat" src="images/cat.svg" alt="" />
+      </div>
+      <div id="effects"></div>
+
+      <!-- Shown while playing -->
+      <div id="hud" hidden>
+        <button id="homeBtn" class="icon-btn" aria-label="Till menyn">⌂</button>
+        <div id="levelName"></div>
+        <div id="question">
+          <div class="small">Landa på svaret</div>
+          <div id="questionText"></div>
+        </div>
+        <div id="progress"></div>
+      </div>
+      <div id="hint" hidden>
+        Tryck för att hoppa!<small>Styr sen till plattan med rätt svar</small>
+      </div>
+
+      <div id="result" class="card" hidden>
+        <div id="resultTitle"></div>
+        <div id="resultText"></div>
+        <button id="nextBtn" class="big-btn">Nästa hopp</button>
+      </div>
+
+      <!-- Start screen -->
+      <div id="menu" class="overlay">
+        <div id="menuCat">
+          <img src="images/parachute.svg" alt="" />
+          <img src="images/cat.svg" alt="" />
+        </div>
+        <h1>Catchute</h1>
+        <p class="tagline">
+          Gångertabellen – hoppa ur planet och landa på rätt svar!
+        </p>
+        <div id="levelButtons"></div>
+      </div>
+
+      <!-- End of a round -->
+      <div id="done" class="overlay dim" hidden>
+        <div class="card done-card">
+          <h2 id="doneTitle"></h2>
+          <div id="doneScore"></div>
+          <div id="doneTable"></div>
+          <div class="buttons">
+            <button id="againBtn" class="big-btn white">Spela igen</button>
+            <button id="doneBtn" class="big-btn"></button>
+          </div>
+          <button id="menuBtn" class="link-btn">Välj tabell</button>
+        </div>
+      </div>
+
+      <button id="muteBtn" class="icon-btn" aria-label="Ljud av/på">🔊</button>
+    </div>
+
+    <!-- Maps import { gsap } from 'gsap' to the local copy in lib/. -->
+    <script type="importmap">
+      { "imports": { "gsap": "./lib/gsap.js" } }
+    </script>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

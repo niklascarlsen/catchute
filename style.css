@@ -1,0 +1,541 @@
+@font-face {
+  font-family: 'Fredoka';
+  src: url(fonts/fredoka.woff2) format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+:root {
+  --ink: #4a2511;
+  --green: #22c55e;
+  --orange: #f97316;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Fredoka', sans-serif;
+  color: var(--ink);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  /* Shows above and below the game on tall screens. */
+  background: linear-gradient(#4fa9e6 50%, #6cc04a 50%);
+}
+
+/* Images can't be dragged or long-pressed, so they never interrupt steering. */
+img {
+  pointer-events: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 4px solid #2563eb;
+  outline-offset: 3px;
+}
+
+/* The game is always 1024x718. main.js scales it to fit the window. */
+#stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1024px;
+  height: 718px;
+  transform-origin: 0 0;
+}
+
+/* Game world */
+
+/* The landscape is much wider than the game area, so screens with a different
+   shape than 1024x718 still get sky and hills all the way to the edges. */
+#scenery {
+  position: absolute;
+  top: 0;
+  left: -1000px;
+  width: 3024px;
+  height: 718px;
+  background: url(images/background.svg);
+}
+
+.cloud {
+  position: absolute;
+  left: -1150px;
+  animation: drift linear infinite;
+}
+
+.cloud-1 {
+  top: 120px;
+  width: 90px;
+  animation-duration: 230s;
+  animation-delay: -90s;
+}
+
+.cloud-2 {
+  top: 260px;
+  width: 140px;
+  animation-duration: 150s;
+  animation-delay: -60s;
+}
+
+.cloud-3 {
+  top: 400px;
+  width: 110px;
+  animation-duration: 190s;
+  animation-delay: -120s;
+}
+
+.cloud-4 {
+  top: 180px;
+  width: 120px;
+  animation-duration: 200s;
+  animation-delay: -10s;
+}
+
+@keyframes drift {
+  to {
+    transform: translateX(3300px);
+  }
+}
+
+#plane {
+  position: absolute;
+  top: 115px;
+  left: 0;
+  width: 160px;
+}
+
+.pad {
+  position: absolute;
+  top: 598px;
+  height: 48px;
+  border: 4px solid var(--ink);
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+  font-weight: 700;
+  color: #fff;
+  -webkit-text-stroke: 6px var(--ink);
+  paint-order: stroke fill;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.15s;
+}
+
+.pad:nth-child(1) {
+  background: #3b82f6;
+}
+.pad:nth-child(2) {
+  background: #a855f7;
+}
+.pad:nth-child(3) {
+  background: #f97316;
+}
+.pad:nth-child(4) {
+  background: #14b8a6;
+}
+
+/* The pad the cat is above right now. */
+.pad.below-cat {
+  box-shadow:
+    0 0 0 8px #fff,
+    0 6px 0 rgba(0, 0, 0, 0.2);
+}
+
+.pad.right {
+  box-shadow:
+    0 0 0 8px #4ade80,
+    0 0 30px 10px #4ade80;
+}
+
+.pad.wrong {
+  background: #ef4444;
+}
+
+/* The cat and parachute images are stacked on top of each other.
+   game.js moves this box so the cat's feet end up at the right spot. */
+#jumper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 128px;
+  height: 172px;
+  /* Swing around the top of the parachute. */
+  transform-origin: 64px 0;
+}
+
+#jumper img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 6px;
+  border-radius: 2px;
+}
+
+/* HUD */
+
+.icon-btn {
+  position: absolute;
+  top: 14px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 4px solid var(--ink);
+  background: #fff;
+  font-size: 26px;
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+#homeBtn {
+  left: 14px;
+}
+
+#muteBtn {
+  right: 14px;
+  /* Above every overlay, so sound can be turned off on any screen. */
+  z-index: 50;
+}
+
+#levelName {
+  position: absolute;
+  left: 14px;
+  top: 80px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 3px solid var(--ink);
+  background: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+#question {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 28px 10px;
+  border: 4px solid var(--ink);
+  border-radius: 22px;
+  background: #fff;
+  text-align: center;
+}
+
+#question .small {
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+#questionText {
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+#progress {
+  position: absolute;
+  right: 82px;
+  top: 24px;
+  display: flex;
+  gap: 4px;
+}
+
+.box {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  background: rgba(255, 255, 255, 0.6);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.box.now {
+  background: #fff;
+}
+.box.right {
+  background: var(--green);
+  color: #fff;
+}
+.box.wrong {
+  background: #fecaca;
+  color: #b91c1c;
+}
+
+#hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 250px;
+  text-align: center;
+  font-size: 40px;
+  font-weight: 700;
+  color: #fff;
+  -webkit-text-stroke: 7px var(--ink);
+  paint-order: stroke fill;
+  pointer-events: none;
+  animation: pulse 1.1s ease-in-out infinite;
+}
+
+#hint small {
+  display: block;
+  font-size: 20px;
+  -webkit-text-stroke: 5px var(--ink);
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.07);
+  }
+}
+
+/* Cards and buttons */
+
+.card {
+  background: #fff;
+  border: 4px solid var(--ink);
+  border-radius: 26px;
+  box-shadow: 0 8px 0 rgba(74, 37, 17, 0.25);
+  text-align: center;
+}
+
+#result {
+  position: absolute;
+  top: 160px;
+  left: 312px;
+  width: 400px;
+  padding: 18px 24px 22px;
+  z-index: 10;
+}
+
+#resultTitle {
+  font-size: 42px;
+  font-weight: 700;
+}
+
+#resultTitle.right {
+  color: #16a34a;
+}
+#resultTitle.wrong {
+  color: var(--orange);
+}
+
+#resultText {
+  font-size: 22px;
+  margin: 6px 0 16px;
+}
+
+.big-btn {
+  border: 4px solid var(--ink);
+  background: var(--green);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 700;
+  padding: 10px 30px;
+  border-radius: 18px;
+  box-shadow: 0 5px 0 var(--ink);
+  -webkit-text-stroke: 3px var(--ink);
+  paint-order: stroke fill;
+}
+
+.big-btn.white {
+  background: #fff;
+  color: var(--ink);
+  -webkit-text-stroke: 0;
+}
+
+.big-btn:active,
+.icon-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.link-btn {
+  margin-top: 14px;
+  border: 0;
+  background: none;
+  font-size: 18px;
+  text-decoration: underline;
+}
+
+/* Start screen */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay.dim {
+  /* Reaches far outside the game area so the whole screen gets darker. */
+  inset: -2000px;
+  background: rgba(30, 41, 59, 0.35);
+}
+
+#menuCat {
+  position: relative;
+  width: 110px;
+  height: 148px;
+  animation: float 2.3s ease-in-out infinite alternate;
+}
+
+#menuCat img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes float {
+  to {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+h1 {
+  margin: 0;
+  font-size: 84px;
+  line-height: 1;
+  color: #fff;
+  -webkit-text-stroke: 10px var(--ink);
+  paint-order: stroke fill;
+}
+
+.tagline {
+  margin: 10px 0 20px;
+  padding: 5px 20px;
+  font-size: 21px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.85);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+}
+
+#levelButtons {
+  display: grid;
+  grid-template-columns: repeat(5, 150px);
+  gap: 12px;
+}
+
+.level-btn {
+  padding: 8px;
+  background: #fff;
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: 0 5px 0 var(--ink);
+  transition: transform 0.15s ease-out;
+}
+
+@media (hover: hover) {
+  .level-btn:hover {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+}
+
+.level-btn .number {
+  display: block;
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--orange);
+  -webkit-text-stroke: 5px var(--ink);
+  paint-order: stroke fill;
+}
+
+.level-btn:last-child .number {
+  font-size: 34px;
+  line-height: 46px;
+  color: var(--green);
+}
+
+.level-btn .name {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.level-btn .best {
+  display: block;
+  min-height: 17px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #a16207;
+}
+
+/* End screen */
+
+.done-card {
+  width: 580px;
+  padding: 22px 30px 20px;
+}
+
+#doneTitle {
+  margin: 0 0 8px;
+  font-size: 52px;
+  line-height: 1;
+  color: var(--orange);
+}
+
+#doneScore {
+  margin-bottom: 12px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+#doneTable {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.fact {
+  padding: 8px 4px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.fact.right {
+  background: #bbf7d0;
+}
+.fact.wrong {
+  background: #fecaca;
+  color: #991b1b;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}

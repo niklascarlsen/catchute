@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-72 -38 140 62">
+  <g stroke="#4a2511" stroke-linejoin="round">
+    <path d="M -50 -4 L -68 -34 L -52 -34 L -34 -8 Z" fill="#ef4444" stroke-width="3"/>
+    <path d="M -58 -6 Q -42 -19 8 -17 Q 48 -15 58 0 Q 48 15 8 15 Q -42 15 -58 5 Z" fill="#facc15" stroke-width="3"/>
+    <path d="M -44 3 L 44 3" stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="14" cy="-5" r="5.5" fill="#bae6fd" stroke-width="2.5"/>
+    <circle cx="30" cy="-4" r="5" fill="#bae6fd" stroke-width="2.5"/>
+    <path d="M -22 -8 L -6 -8 L -6 8 L -22 8 Z" fill="#1e3a5f" stroke-width="2.5"/>
+    <ellipse cx="-2" cy="8" rx="30" ry="7" fill="#ef4444" stroke-width="3"/>
+    <circle cx="58" cy="0" r="5.5" fill="#94a3b8" stroke-width="2.5"/>
+  </g>
+  <!-- spinning propeller -->
+  <ellipse cx="62" cy="0" rx="3" ry="21" fill="#475569" opacity=".55">
+    <animate attributeName="ry" values="21;4;21" dur="0.12s" repeatCount="indefinite"/>
+  </ellipse>
+</svg>

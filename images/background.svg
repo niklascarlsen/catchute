@@ -20,8 +20,9 @@
 
   <!-- sky and sun -->
   <rect x="-1000" width="3024" height="628" fill="url(#sky)"/>
-  <circle cx="880" cy="86" r="110" fill="url(#glow)"/>
-  <circle cx="880" cy="86" r="42" fill="#ffd84d" stroke="#f5b82e" stroke-width="4"/>
+  <!-- Low enough that the glow stays inside the sky on short screens. -->
+  <circle cx="880" cy="190" r="110" fill="url(#glow)"/>
+  <circle cx="880" cy="190" r="42" fill="#ffd84d" stroke="#f5b82e" stroke-width="4"/>
 
   <!-- hills and trees -->
   <ellipse cx="-900" cy="658" rx="600" ry="110" fill="#a8dc86"/>

@@ -1,18 +1,20 @@
 // The levels and the questions in them.
 
 // One level per table from 2 to 10, and a mixed level at the end.
-// The small tables get three pads instead of four, to make them a bit easier.
+// The name shown on the button comes from language.js, so the id stays put
+// when the player switches language. The small tables get three pads instead
+// of four, to make them a bit easier.
 export const LEVELS = [
-  { name: 'Tvåans tabell', table: 2, pads: 3 },
-  { name: 'Treans tabell', table: 3, pads: 3 },
-  { name: 'Fyrans tabell', table: 4, pads: 3 },
-  { name: 'Femmans tabell', table: 5, pads: 3 },
-  { name: 'Sexans tabell', table: 6, pads: 4 },
-  { name: 'Sjuans tabell', table: 7, pads: 4 },
-  { name: 'Åttans tabell', table: 8, pads: 4 },
-  { name: 'Nians tabell', table: 9, pads: 4 },
-  { name: 'Tians tabell', table: 10, pads: 4 },
-  { name: 'Blandat', table: null, pads: 4 },
+  { id: '2', table: 2, pads: 3 },
+  { id: '3', table: 3, pads: 3 },
+  { id: '4', table: 4, pads: 3 },
+  { id: '5', table: 5, pads: 3 },
+  { id: '6', table: 6, pads: 4 },
+  { id: '7', table: 7, pads: 4 },
+  { id: '8', table: 8, pads: 4 },
+  { id: '9', table: 9, pads: 4 },
+  { id: '10', table: 10, pads: 4 },
+  { id: 'mixed', table: null, pads: 4 },
 ];
 
 function randomInt(min, max) {

@@ -9,6 +9,17 @@
   --ink: #4a2511;
   --green: #22c55e;
   --orange: #f97316;
+  /* Outline drawn as shadows. A text stroke leaves a white gap in Fredoka's 3. */
+  --outline:
+    -3px 0 var(--ink), 3px 0 var(--ink), 0 -3px var(--ink), 0 3px var(--ink),
+    -2px -2px var(--ink), -2px -1px var(--ink), -2px 0 var(--ink),
+    -2px 1px var(--ink), -2px 2px var(--ink), -1px -2px var(--ink),
+    -1px -1px var(--ink), -1px 0 var(--ink), -1px 1px var(--ink),
+    -1px 2px var(--ink), 0 -2px var(--ink), 0 -1px var(--ink), 0 1px var(--ink),
+    0 2px var(--ink), 1px -2px var(--ink), 1px -1px var(--ink),
+    1px 0 var(--ink), 1px 1px var(--ink), 1px 2px var(--ink),
+    2px -2px var(--ink), 2px -1px var(--ink), 2px 0 var(--ink),
+    2px 1px var(--ink), 2px 2px var(--ink);
 }
 
 * {
@@ -133,8 +144,7 @@ button:focus-visible {
   font-size: 34px;
   font-weight: 700;
   color: #fff;
-  -webkit-text-stroke: 6px var(--ink);
-  paint-order: stroke fill;
+  text-shadow: var(--outline);
   box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
   transition: box-shadow 0.15s;
 }
@@ -217,6 +227,49 @@ button:focus-visible {
   right: 14px;
   /* Above every overlay, so sound can be turned off on any screen. */
   z-index: 50;
+}
+
+/* Swedish / English, under the mute button on every screen. */
+#langSwitch {
+  position: absolute;
+  top: 76px;
+  right: 14px;
+  z-index: 50;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 4px solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+#langSwitch button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+#langSwitch button[aria-pressed='true'] {
+  background: var(--orange);
+  color: #fff;
+}
+
+@media (hover: hover) {
+  #langSwitch button:hover {
+    background: #ffedd5;
+  }
+
+  #langSwitch button[aria-pressed='true']:hover {
+    background: var(--orange);
+  }
 }
 
 #levelName {
@@ -466,8 +519,7 @@ h1 {
   font-weight: 700;
   line-height: 1;
   color: var(--orange);
-  -webkit-text-stroke: 5px var(--ink);
-  paint-order: stroke fill;
+  text-shadow: var(--outline);
 }
 
 .level-btn:last-child .number {

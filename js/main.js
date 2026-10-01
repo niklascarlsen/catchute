@@ -12,6 +12,13 @@ import {
 } from './game.js';
 import { playSound, toggleMute, unlockSounds, isMuted } from './sound.js';
 import { readSetting, writeSetting } from './storage.js';
+import {
+  getLanguage,
+  levelName,
+  onLanguageChange,
+  setLanguage,
+  t,
+} from './language.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -41,6 +48,7 @@ const round = {
   index: 0,
   results: [], // true or false for each question
   retry: false, // only the missed questions, doesn't count as a record
+  landing: null, // kept so the result card can be translated after it shows
 };
 
 let lastLevel = LEVELS[0]; // Enter on the start screen plays this table
@@ -51,24 +59,71 @@ let hintTimer = null; // shows "tap to jump" a moment after each question
 let cardShownAt = 0;
 const cardJustShown = () => performance.now() - cardShownAt < 300;
 
+// Older saves used the Swedish level name as the key. The id stays the same
+// when the language changes, so move those scores over once.
+const OLD_RECORD_NAMES = {
+  'Tvåans tabell': '2',
+  'Treans tabell': '3',
+  'Fyrans tabell': '4',
+  'Femmans tabell': '5',
+  'Sexans tabell': '6',
+  'Sjuans tabell': '7',
+  'Åttans tabell': '8',
+  'Nians tabell': '9',
+  'Tians tabell': '10',
+  Blandat: 'mixed',
+};
+
 // Best score for each table, saved in the browser.
 function loadRecords() {
+  let records;
   try {
-    return JSON.parse(readSetting('catchute-records')) || {};
+    records = JSON.parse(readSetting('catchute-records')) || {};
   } catch {
     return {}; // broken data, start over
   }
+  let changed = false;
+  for (const [name, id] of Object.entries(OLD_RECORD_NAMES)) {
+    if (records[name] === undefined) continue;
+    records[id] = Math.max(records[id] || 0, records[name]);
+    delete records[name];
+    changed = true;
+  }
+  if (changed) writeSetting('catchute-records', JSON.stringify(records));
+  return records;
 }
 
 function saveRecord(level, score) {
   const records = loadRecords();
-  if ((records[level.name] || 0) < score) {
-    records[level.name] = score;
+  if ((records[level.id] || 0) < score) {
+    records[level.id] = score;
     writeSetting('catchute-records', JSON.stringify(records));
   }
 }
 
+function levelLabel(level, retry) {
+  const name = levelName(level.id);
+  return retry ? `${name} · ${t('practice')}` : name;
+}
+
 // Start screen
+
+function renderMenu() {
+  const records = loadRecords();
+  $('levelButtons').innerHTML = '';
+  for (const level of LEVELS) {
+    const button = document.createElement('button');
+    button.className = 'level-btn';
+    const best = records[level.id];
+    const bestText = best === undefined ? '' : `★ ${best} / 10`;
+    button.innerHTML = `
+      <span class="number">${level.table || '2–10'}</span>
+      <span class="name">${levelName(level.id)}</span>
+      <span class="best">${bestText}</span>`;
+    button.onclick = () => startRound(level);
+    $('levelButtons').append(button);
+  }
+}
 
 function showMenu() {
   stopGame();
@@ -78,21 +133,7 @@ function showMenu() {
   $('result').hidden = true;
   $('done').hidden = true;
   $('menu').hidden = false;
-
-  const records = loadRecords();
-  $('levelButtons').innerHTML = '';
-  for (const level of LEVELS) {
-    const button = document.createElement('button');
-    button.className = 'level-btn';
-    const best = records[level.name];
-    const bestText = best === undefined ? '' : `★ ${best} / 10`;
-    button.innerHTML = `
-      <span class="number">${level.table || '2–10'}</span>
-      <span class="name">${level.name}</span>
-      <span class="best">${bestText}</span>`;
-    button.onclick = () => startRound(level);
-    $('levelButtons').append(button);
-  }
+  renderMenu();
 }
 
 // Playing
@@ -109,9 +150,7 @@ function startRound(level, questions) {
   $('menu').hidden = true;
   $('done').hidden = true;
   $('hud').hidden = false;
-  $('levelName').textContent = round.retry
-    ? `${level.name} · Övning`
-    : level.name;
+  $('levelName').textContent = levelLabel(level, round.retry);
   nextQuestion();
 }
 
@@ -150,31 +189,36 @@ function drawProgress() {
   });
 }
 
-// game.js calls this when the cat has landed.
-game.onLanded = ({ correct, perfect, chosen }) => {
+function renderResult() {
   const question = round.questions[round.index];
-  round.results.push(correct);
-  drawProgress();
-  $('hint').hidden = true;
-
+  const { correct, perfect, chosen } = round.landing;
   const title = $('resultTitle');
   const fact = `<b>${question.text} = ${question.answer}</b>`;
   if (correct) {
-    title.textContent = perfect ? 'Rätt – mitt i prick!' : 'Rätt!';
+    title.textContent = perfect ? t('perfect') : t('correct');
     title.className = 'right';
     $('resultText').innerHTML = fact;
   } else if (chosen !== null) {
-    title.textContent = 'Oj, fel platta!';
+    title.textContent = t('wrongPad');
     title.className = 'wrong';
-    $('resultText').innerHTML = `${fact}, inte ${chosen}.`;
+    $('resultText').innerHTML = t('notChosen', fact, chosen);
   } else {
-    title.textContent = 'Plums!';
+    title.textContent = t('splash');
     title.className = 'wrong';
-    $('resultText').innerHTML = `Du missade plattorna. ${fact}`;
+    $('resultText').innerHTML = t('missedPads', fact);
   }
 
   const isLast = round.index === round.questions.length - 1;
-  $('nextBtn').textContent = isLast ? 'Se resultat' : 'Nästa hopp';
+  $('nextBtn').textContent = isLast ? t('seeResults') : t('nextJump');
+}
+
+// game.js calls this when the cat has landed.
+game.onLanded = (landing) => {
+  round.landing = landing;
+  round.results.push(landing.correct);
+  drawProgress();
+  $('hint').hidden = true;
+  renderResult();
   $('result').hidden = false;
   gsap.from('#result', {
     y: 30,
@@ -200,19 +244,18 @@ $('nextBtn').onclick = () => {
 
 // End of the round
 
-function showRoundDone() {
+function renderDone() {
   const score = round.results.filter(Boolean).length;
   const total = round.questions.length;
   const missed = round.questions.filter((q, i) => !round.results[i]);
-  if (!round.retry) saveRecord(round.level, score);
 
   if (missed.length === 0) {
-    $('doneTitle').textContent = round.retry ? 'Nu sitter de!' : 'Alla rätt!';
+    $('doneTitle').textContent = round.retry ? t('gotThem') : t('allCorrect');
   } else {
     $('doneTitle').textContent =
-      score / total >= 0.7 ? 'Bra jobbat!' : 'Bra kämpat!';
+      score / total >= 0.7 ? t('goodJob') : t('goodTry');
   }
-  $('doneScore').textContent = `${score} av ${total} rätt`;
+  $('doneScore').textContent = t('score', score, total);
 
   // Every question from the round in order, green if right and red if wrong.
   $('doneTable').innerHTML = '';
@@ -230,17 +273,23 @@ function showRoundDone() {
   const nextLevel = LEVELS[LEVELS.indexOf(round.level) + 1];
   $('againBtn').hidden = false;
   if (missed.length > 0) {
-    $('doneBtn').textContent = `Öva på missade (${missed.length})`;
+    $('doneBtn').textContent = t('practiceMissed', missed.length);
     $('doneBtn').onclick = () =>
       startRound(round.level, makeRetryRound(round.level, missed));
   } else if (nextLevel) {
-    $('doneBtn').textContent = 'Nästa tabell';
+    $('doneBtn').textContent = t('nextTable');
     $('doneBtn').onclick = () => startRound(nextLevel);
   } else {
-    $('doneBtn').textContent = 'Spela igen';
+    $('doneBtn').textContent = t('playAgain');
     $('doneBtn').onclick = () => startRound(round.level);
     $('againBtn').hidden = true;
   }
+}
+
+function showRoundDone() {
+  const score = round.results.filter(Boolean).length;
+  if (!round.retry) saveRecord(round.level, score);
+  renderDone();
 
   $('result').hidden = true;
   $('done').hidden = false;
@@ -258,6 +307,25 @@ function showRoundDone() {
 $('againBtn').onclick = () => startRound(round.level);
 $('menuBtn').onclick = showMenu;
 $('homeBtn').onclick = showMenu;
+
+// Language. Static text is swapped in language.js. Screens that build their
+// own text are drawn again so a switch mid-round updates what is showing.
+function refreshLanguage() {
+  renderMenu();
+  if (round.level) {
+    $('levelName').textContent = levelLabel(round.level, round.retry);
+  }
+  if (!$('result').hidden) renderResult();
+  if (!$('done').hidden) renderDone();
+}
+onLanguageChange(refreshLanguage);
+
+$('langSwitch').onclick = (event) => {
+  const button = event.target.closest('button');
+  if (!button || button.dataset.lang === getLanguage()) return;
+  playSound('click');
+  setLanguage(button.dataset.lang);
+};
 
 // Sound on and off
 
@@ -281,7 +349,7 @@ let fingerDown = false;
 
 window.addEventListener('pointerdown', (event) => {
   // Buttons and cards handle their own clicks.
-  if (event.target.closest('button, .card, .overlay')) return;
+  if (event.target.closest('button, .card, .overlay, #langSwitch')) return;
   fingerDown = true;
   steerTo(stageX(event));
   if (game.state === 'aim') {

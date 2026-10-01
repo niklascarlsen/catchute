@@ -28,22 +28,23 @@
 
       <!-- Shown while playing -->
       <div id="hud" hidden>
-        <button id="homeBtn" class="icon-btn" aria-label="Till menyn">⌂</button>
+        <button id="homeBtn" class="icon-btn" data-i18n-aria="toMenu" aria-label="Till menyn">⌂</button>
         <div id="levelName"></div>
         <div id="question">
-          <div class="small">Landa på svaret</div>
+          <div class="small" data-i18n="landOn">Landa på svaret</div>
           <div id="questionText"></div>
         </div>
         <div id="progress"></div>
       </div>
       <div id="hint" hidden>
-        Tryck för att hoppa!<small>Styr sen till plattan med rätt svar</small>
+        <span data-i18n="tapToJump">Tryck för att hoppa!</span>
+        <small data-i18n="steerHint">Styr sen till plattan med rätt svar</small>
       </div>
 
       <div id="result" class="card" hidden>
         <div id="resultTitle"></div>
         <div id="resultText"></div>
-        <button id="nextBtn" class="big-btn">Nästa hopp</button>
+        <button id="nextBtn" class="big-btn" data-i18n="nextJump">Nästa hopp</button>
       </div>
 
       <!-- Start screen -->
@@ -53,7 +54,7 @@
           <img src="images/cat.svg" alt="" />
         </div>
         <h1>Catchute</h1>
-        <p class="tagline">
+        <p class="tagline" data-i18n="tagline">
           Gångertabellen – hoppa ur planet och landa på rätt svar!
         </p>
         <div id="levelButtons"></div>
@@ -66,14 +67,34 @@
           <div id="doneScore"></div>
           <div id="doneTable"></div>
           <div class="buttons">
-            <button id="againBtn" class="big-btn white">Spela igen</button>
+            <button id="againBtn" class="big-btn white" data-i18n="playAgain">Spela igen</button>
             <button id="doneBtn" class="big-btn"></button>
           </div>
-          <button id="menuBtn" class="link-btn">Välj tabell</button>
+          <button id="menuBtn" class="link-btn" data-i18n="chooseTable">Välj tabell</button>
         </div>
       </div>
 
-      <button id="muteBtn" class="icon-btn" aria-label="Ljud av/på">🔊</button>
+      <button id="muteBtn" class="icon-btn" data-i18n-aria="sound" aria-label="Ljud av/på">🔊</button>
+      <div id="langSwitch" role="group" data-i18n-aria="language" aria-label="Språk">
+        <button
+          type="button"
+          data-lang="sv"
+          data-i18n-aria="swedish"
+          aria-label="Svenska"
+          aria-pressed="true"
+        >
+          SV
+        </button>
+        <button
+          type="button"
+          data-lang="en"
+          data-i18n-aria="english"
+          aria-label="English"
+          aria-pressed="false"
+        >
+          EN
+        </button>
+      </div>
     </div>
 
     <!-- Maps import { gsap } from 'gsap' to the local copy in lib/. -->

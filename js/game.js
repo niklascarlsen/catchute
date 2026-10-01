@@ -1,12 +1,21 @@
 // One jump: the plane flies by, the cat jumps, you steer it down to a pad.
 
 import { gsap } from 'gsap';
+import { onLanguageChange, t } from './language.js';
 import { playSound } from './sound.js';
 
 const PLANE_SPEED = 150; // pixels per second
 const FALL_SPEED = 70; // pixels per second, about 6 seconds to the ground
-const MAX_STEER_SPEED = 240; // fastest sideways speed, pixels per second
+const MAX_STEER_SPEED = 300; // fastest sideways speed, pixels per second
 const STEER_EASING = 3.2; // how quickly the cat speeds up and slows down
+// Pull toward the pointer. Low on purpose: together with the wind below, the
+// cat settles about 100 px downwind of the pointer, so pointing at a pad misses.
+const STEER_GAIN = 0.85;
+// Steady sideways push, plus a gust that swells and fades during the fall.
+// Strong enough that you have to steer into it. Weak enough that steering
+// against it can still carry the cat from one side of the screen to the other.
+const WIND_SPEED = 100;
+const WIND_GUST = 15;
 const PAD_TOP = 598; // where the feet stop on a pad (same as .pad in CSS)
 const GRASS_TOP = 650; // ...and here if it misses and lands in the grass
 const PADS_LEFT = 96; // the pads are spread out between these two x positions
@@ -18,6 +27,7 @@ const parachuteImg = document.getElementById('parachute');
 const catImg = document.getElementById('cat');
 const padArea = document.getElementById('pads');
 const effects = document.getElementById('effects');
+const windEl = document.getElementById('wind');
 
 export const game = {
   state: 'idle', // idle, aim, falling or landed
@@ -29,6 +39,8 @@ export const game = {
   catSpeedX: 0, // sideways speed, pixels per second
   targetX: null, // where the player is pointing
   keyDirection: 0, // -1 left, 1 right, 0 no key
+  wind: 0, // steady push this jump, pixels per second. Negative blows left.
+  windPhase: 0,
   missedPads: false,
   jumpWhenReady: false, // tapped before the plane was on screen
   screenLeft: 0, // visible edges of the screen, set by main.js
@@ -68,6 +80,7 @@ export function showQuestion(question) {
     });
     return { value, x, width, el };
   });
+  pickWind();
 }
 
 function planeOnScreen() {
@@ -120,16 +133,16 @@ function update(dt) {
 
   if (game.state !== 'falling') return;
 
-  // Steering. First work out how fast we want to go: full speed with the arrow
-  // keys, or faster the further away the finger is. Then change the speed a
-  // little each frame instead of all at once, so the cat glides smoothly.
+  // Steering pulls toward the pointer, or runs at full speed with the keys.
+  // The wind is added on top, so the cat settles downwind of the pointer:
+  // pointing straight at a pad lands you beside it. Aim into the wind.
   let wantedSpeed = 0;
   if (game.missedPads) {
     wantedSpeed = 0; // missed the pads, no more steering
   } else if (game.keyDirection) {
     wantedSpeed = game.keyDirection * MAX_STEER_SPEED;
   } else if (game.targetX !== null) {
-    wantedSpeed = (game.targetX - game.catX) * 2.8;
+    wantedSpeed = (game.targetX - game.catX) * STEER_GAIN;
     wantedSpeed = Math.max(
       -MAX_STEER_SPEED,
       Math.min(MAX_STEER_SPEED, wantedSpeed),
@@ -137,7 +150,12 @@ function update(dt) {
   }
   game.catSpeedX +=
     (wantedSpeed - game.catSpeedX) * Math.min(1, STEER_EASING * dt);
-  game.catX += game.catSpeedX * dt;
+  const wind = windNow();
+  const drift = Math.max(
+    -MAX_STEER_SPEED,
+    Math.min(MAX_STEER_SPEED, game.catSpeedX + wind),
+  );
+  game.catX += drift * dt;
   game.catX = Math.max(30, Math.min(994, game.catX));
 
   game.catY += FALL_SPEED * dt;
@@ -163,7 +181,7 @@ function update(dt) {
   // The cat swings a little while falling, and leans the way it's moving.
   const swing =
     game.state === 'falling'
-      ? Math.sin(performance.now() / 450) * 4 + game.catSpeedX * 0.05
+      ? Math.sin(performance.now() / 450) * 4 + drift * 0.04
       : 0;
   placeJumper(swing);
 }
@@ -192,8 +210,39 @@ function padBelow(x) {
   return game.pads.find((p) => Math.abs(x - p.x) < p.width / 2 - 4) || null;
 }
 
+// A new wind for this jump, blowing left or right, and the arrow that shows it.
+function pickWind() {
+  game.wind = (Math.random() < 0.5 ? -1 : 1) * WIND_SPEED;
+  game.windPhase = Math.random() * Math.PI * 2;
+  drawWind();
+}
+
+function windNow() {
+  return (
+    game.wind + Math.sin(performance.now() / 1100 + game.windPhase) * WIND_GUST
+  );
+}
+
+function drawWind() {
+  const left = game.wind < 0;
+  windEl.hidden = false;
+  windEl.classList.toggle('blows-left', left);
+  windEl.classList.toggle('blows-right', !left);
+  windEl.setAttribute('aria-label', t(left ? 'windLeft' : 'windRight'));
+}
+
+function hideWind() {
+  windEl.hidden = true;
+  windEl.classList.remove('blows-left', 'blows-right');
+}
+
+onLanguageChange(() => {
+  if (!windEl.hidden) drawWind();
+});
+
 function land(pad) {
   game.state = 'landed';
+  hideWind();
   const rightPad = game.pads.find((p) => p.value === game.question.answer);
   const correct = pad === rightPad;
   // Landing right in the middle gets confetti, but doesn't change the score.
@@ -293,8 +342,10 @@ function confetti(x, y) {
 
 // Removes the cat and stops everything left over from the last jump.
 function clearJump() {
-  game.timers.forEach((t) => t.kill());
+  game.timers.forEach((timer) => timer.kill());
   game.timers = [];
+  game.wind = 0;
+  hideWind();
   gsap.killTweensOf([catImg, parachuteImg, ...effects.children]);
   gsap.set([catImg, parachuteImg], { clearProps: 'all' });
   jumper.hidden = true;

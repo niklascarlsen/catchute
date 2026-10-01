@@ -28,23 +28,38 @@
 
       <!-- Shown while playing -->
       <div id="hud" hidden>
-        <button id="homeBtn" class="icon-btn" data-i18n-aria="toMenu" aria-label="Till menyn">⌂</button>
+        <button
+          id="homeBtn"
+          class="icon-btn"
+          data-i18n-aria="toMenu"
+          aria-label="Till menyn"
+        >
+          ⌂
+        </button>
         <div id="levelName"></div>
         <div id="question">
           <div class="small" data-i18n="landOn">Landa på svaret</div>
           <div id="questionText"></div>
         </div>
         <div id="progress"></div>
+        <div id="wind" hidden>
+          <span class="wind-arrows" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+          <span data-i18n="wind">Vind</span>
+        </div>
       </div>
       <div id="hint" hidden>
         <span data-i18n="tapToJump">Tryck för att hoppa!</span>
-        <small data-i18n="steerHint">Styr sen till plattan med rätt svar</small>
+        <small data-i18n="steerHint">Vinden blåser – styr emot den</small>
       </div>
 
       <div id="result" class="card" hidden>
         <div id="resultTitle"></div>
         <div id="resultText"></div>
-        <button id="nextBtn" class="big-btn" data-i18n="nextJump">Nästa hopp</button>
+        <button id="nextBtn" class="big-btn" data-i18n="nextJump">
+          Nästa hopp
+        </button>
       </div>
 
       <!-- Start screen -->
@@ -67,15 +82,31 @@
           <div id="doneScore"></div>
           <div id="doneTable"></div>
           <div class="buttons">
-            <button id="againBtn" class="big-btn white" data-i18n="playAgain">Spela igen</button>
+            <button id="againBtn" class="big-btn white" data-i18n="playAgain">
+              Spela igen
+            </button>
             <button id="doneBtn" class="big-btn"></button>
           </div>
-          <button id="menuBtn" class="link-btn" data-i18n="chooseTable">Välj tabell</button>
+          <button id="menuBtn" class="link-btn" data-i18n="chooseTable">
+            Välj tabell
+          </button>
         </div>
       </div>
 
-      <button id="muteBtn" class="icon-btn" data-i18n-aria="sound" aria-label="Ljud av/på">🔊</button>
-      <div id="langSwitch" role="group" data-i18n-aria="language" aria-label="Språk">
+      <button
+        id="muteBtn"
+        class="icon-btn"
+        data-i18n-aria="sound"
+        aria-label="Ljud av/på"
+      >
+        🔊
+      </button>
+      <div
+        id="langSwitch"
+        role="group"
+        data-i18n-aria="language"
+        aria-label="Språk"
+      >
         <button
           type="button"
           data-lang="sv"

@@ -339,6 +339,70 @@ button:focus-visible {
   color: #b91c1c;
 }
 
+/* Which way the wind is blowing this jump. The arrows slide that way. */
+#wind {
+  position: absolute;
+  left: 16px;
+  top: 200px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px 0 10px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  font-size: 18px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.wind-arrows {
+  display: flex;
+  gap: 1px;
+}
+
+.wind-arrows span {
+  width: 9px;
+  height: 9px;
+  border-right: 3px solid #0284c7;
+  border-bottom: 3px solid #0284c7;
+}
+
+#wind.blows-right .wind-arrows {
+  animation: gust-right 0.7s ease-in-out infinite alternate;
+}
+
+#wind.blows-right .wind-arrows span {
+  transform: rotate(-45deg);
+}
+
+#wind.blows-left .wind-arrows {
+  animation: gust-left 0.7s ease-in-out infinite alternate;
+}
+
+#wind.blows-left .wind-arrows span {
+  transform: rotate(135deg);
+}
+
+@keyframes gust-right {
+  from {
+    transform: translateX(-3px);
+  }
+  to {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes gust-left {
+  from {
+    transform: translateX(3px);
+  }
+  to {
+    transform: translateX(-5px);
+  }
+}
+
 #hint {
   position: absolute;
   left: 0;
